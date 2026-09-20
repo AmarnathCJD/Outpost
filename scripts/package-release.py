@@ -3,7 +3,6 @@ from pathlib import Path
 import hashlib
 import shutil
 import tarfile
-import zipfile
 
 root = Path(__file__).resolve().parent.parent
 dist = root / 'dist'
@@ -48,13 +47,7 @@ for name, members in {
         for path, target in members:
             archive.add(path, arcname=target, recursive=False, filter=metadata)
 
-with zipfile.ZipFile(dist / 'outpost-branding.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
-    for path in sorted((root / 'assets/branding').iterdir()):
-        if path.is_file():
-            archive.write(path, path.name)
-    archive.write(root / 'desktop/outpost.ico', 'outpost.ico')
-
-names = ['outpost.apk', 'outpost-windows.zip', 'outpost-server.tar.gz', 'outpost-server-linux-amd64.tar.gz', 'outpost-relay-linux-amd64.tar.gz', 'outpost-branding.zip']
+names = ['outpost.apk', 'outpost-windows.zip', 'outpost-server.tar.gz', 'outpost-server-linux-amd64.tar.gz', 'outpost-relay-linux-amd64.tar.gz']
 for name in names:
     shutil.copy2(dist / name, release / name)
 shutil.copy2(root / 'docs/RELEASE_NOTES.md', release / 'RELEASE_NOTES.md')

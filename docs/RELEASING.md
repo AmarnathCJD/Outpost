@@ -21,7 +21,6 @@ Upload these files from `dist/release/` to a GitHub release:
 | `outpost-server.tar.gz` | Linux server source and Docker deployment scripts |
 | `outpost-server-linux-amd64.tar.gz` | Native Linux x64 backend binary and setup notes |
 | `outpost-relay-linux-amd64.tar.gz` | VPS relay binary, systemd installer and HTTPS proxy guide |
-| `outpost-branding.zip` | Transparent SVG/PNG marks, app icon and Windows ICO |
 | `SHA256SUMS` | SHA-256 hashes for release assets |
 | `RELEASE_NOTES.md` | Prepared release description |
 
