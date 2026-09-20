@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
+<title id="title">Outpost ? your workspace, wherever you are</title>
+<desc id="desc">Work from your phone. Run your real tools on your own laptop or server.</desc>
+<rect width="1200" height="360" rx="20" fill="#181818"/>
+<path d="M0 316H1200" stroke="#333333"/>
+<path d="M40 48H84" stroke="#2F97FC" stroke-width="5"/>
+<text x="40" y="137" fill="#FAFAFA" font-size="74" font-weight="600" font-family="Inter,Segoe UI,Arial,sans-serif" letter-spacing="-3">Outpost</text>
+<text x="43" y="195" fill="#F0F0F0" font-size="30" font-family="Inter,Segoe UI,Arial,sans-serif">Your workspace. Wherever you are.</text>
+<text x="44" y="242" fill="#AAAAAA" font-size="19" font-family="Inter,Segoe UI,Arial,sans-serif">Code, run, review, and ship ? from your phone.</text>
+<g transform="translate(930 80) scale(1.1)"><path fill="#2F97FC" fill-rule="evenodd" d="M0,0H180V180H108V138H72V180H0Z M33,33V147H60V126H120V147H147V33Z"/></g>
+<text x="44" y="344" fill="#9D9D9D" font-size="14" font-family="JetBrains Mono,Consolas,monospace" letter-spacing="1.5">ANDROID  /  WINDOWS + LINUX  /  YOUR OWN INFRASTRUCTURE</text>
+</svg>

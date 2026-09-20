@@ -1,0 +1,18 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'none'; img-src 'none'">
+<link rel="stylesheet" href="xterm.css"><style>@font-face{font-family:OutpostMono;src:url(terminal-font.ttf) format("truetype");font-display:swap}html,body{margin:0;overflow:hidden;background:#1f1f1f}#terminal{position:fixed;inset:0;box-sizing:border-box;padding:8px}.xterm{height:100%}.xterm-viewport{background:#1f1f1f!important}</style></head>
+<body><div id="terminal"></div><script src="xterm.js"></script><script src="addon-fit.js"></script><script>
+const term=new Terminal({cursorBlink:true,fontSize:14,fontFamily:'OutpostMono,monospace',scrollback:10000,convertEol:false,theme:{background:'#1f1f1f',foreground:'#cccccc',cursor:'#cccccc',selectionBackground:'#264f78',black:'#181818',red:'#f14c4c',green:'#23d18b',yellow:'#f5f543',blue:'#3b8eea',magenta:'#d670d6',cyan:'#29b8db',white:'#e5e5e5'}});
+const fit=new FitAddon.FitAddon();term.loadAddon(fit);term.open(document.getElementById('terminal'));
+// Android IMEs edit xterm's hidden textarea inconsistently. Use the native composer.
+term.textarea.readOnly=true;term.textarea.inputMode='none';term.textarea.tabIndex=-1;term.textarea.setAttribute('aria-hidden','true');
+document.getElementById('terminal').addEventListener('click',()=>Native.focusInput());
+function resize(){try{const dims=fit.proposeDimensions();if(dims&&dims.cols>=10&&dims.rows>=2){term.resize(dims.cols,dims.rows);Native.resize(term.cols,term.rows)}}catch(e){}}
+// Percent heights can resolve to zero when Android first measures an embedded WebView.
+// Use its actual viewport and update it again on keyboard/orientation changes.
+window.setViewport=(w,h)=>{if(w<=0||h<=0)return;const box=document.getElementById('terminal');box.style.height=(h/window.devicePixelRatio)+'px';box.style.width=(w/window.devicePixelRatio)+'px';resize();term.refresh(0,term.rows-1)};
+term.onData(d=>Native.input(d));window.receive=b=>term.write(Uint8Array.from(atob(b),c=>c.charCodeAt(0)));window.setFont=n=>{term.options.fontSize=n;resize()};
+window.sendDraft=s=>{const text=s.replace(/\r?\n/g,'\r');const paste=term.modes.bracketedPasteMode?'\x1b[200~'+text+'\x1b[201~':text;return Native.input(paste+'\r')};
+new ResizeObserver(resize).observe(document.getElementById('terminal'));resize();document.fonts.ready.then(resize);Native.ready();
+</script></body></html>

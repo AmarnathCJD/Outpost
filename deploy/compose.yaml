@@ -1,0 +1,73 @@
+name: outpost
+services:
+  workspace:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    init: true
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${OUTPOST_PORT:-8787}:8787"
+    environment:
+      WFY_ROOT: /workspaces
+      WFY_TOKEN_FILE: /run/secrets/server_token
+      WFY_SQL_PASSWORD_FILE: /run/secrets/sql_password
+      SQLSERVER_HOST: mssql
+      SQLSERVER_PORT: "1433"
+      SQLSERVER_USER: sa
+      SQLSERVER_DATABASE: master
+      TERM: xterm-256color
+      COLORTERM: truecolor
+    secrets: [server_token, sql_password]
+    volumes:
+      - workspaces:/workspaces
+      - home:/home/dev
+    networks: [development]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 8g
+    cpus: 6
+    pids_limit: 1024
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/outpost", "healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-CU22-ubuntu-22.04
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      MSSQL_MEMORY_LIMIT_MB: "${MSSQL_MEMORY_LIMIT_MB:-4096}"
+    entrypoint: ["/bin/bash", "-c", "export MSSQL_SA_PASSWORD=$$(cat /run/secrets/sql_password); exec /opt/mssql/bin/sqlservr"]
+    secrets: [sql_password]
+    volumes: ["mssql:/var/opt/mssql"]
+    networks: [development]
+    mem_limit: 6g
+    cpus: 2
+    pids_limit: 512
+    healthcheck:
+      test: ["CMD-SHELL", "SQLCMDPASSWORD=$$(cat /run/secrets/sql_password) /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -C -Q 'SELECT 1' -b -o /dev/null"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 45s
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+networks:
+  development:
+    driver: bridge
+volumes:
+  workspaces:
+  home:
+  mssql:
+secrets:
+  server_token:
+    file: ./secrets/server_token
+  sql_password:
+    file: ./secrets/sql_password
